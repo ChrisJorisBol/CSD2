@@ -7,16 +7,21 @@ using namespace std;
 Instrument::Instrument(string sound)
 {
     this->sound = sound;
-	cout << "Constructor - Instrument";
-}
+	cout << "\nConstructor - Instrument\n";
+};
 
-Keys::Keys(string timbre) : Instrument(sound)
+void Instrument::setRange(string pitch_range)
 {
-    this->sound = "pling";
-	cout << "Constructor - Keys";
-    cout << "\nThis sounds like = " << timbre << "\n";
-}
+	this->pitch_range = pitch_range;
+	cout << "\nPitch range is\n" << pitch_range;
+	// return pitch_range;
+};
 
+void Instrument::setTimbre(string timbre)
+{
+	this->timbre = timbre;
+	cout << "\nTimbre is\n" << timbre << "\n";
+};
 // void Keys::setSound(string sound)
 // {
 // 	this->sound = timbre;
@@ -30,8 +35,9 @@ Keys::Keys(string timbre) : Instrument(sound)
 //
 void Instrument::play()
 {
-    cout << "play: " << sound << endl;
+    cout << "playing piano\n" << sound << endl;
 };
+
 
 // void Instrument::pitch(int y)
 // {

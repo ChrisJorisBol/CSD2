@@ -1,4 +1,5 @@
 // inheritance.h
+#pragma once
 #include <iostream>
 #include <string>
 class Instrument
@@ -6,21 +7,18 @@ class Instrument
 public:
     Instrument(std::string sound);
     std::string sound;
-    int y;
+	std::string timbre;
     void play();
+	void setRange(std::string pitch_range);
+	void setTimbre(std::string timbre);
+	std::string pitch_range;
     // void pitch(int y);
 };
 
 
 
-class Keys: public Instrument
-{
-public:
-    Keys(std::string timbre);
-	std::string timbre;
-	void setSound(std::string sound);
-	std::string getSound();
-};
+
+
 
 // class Strings: public Instrument
 // {
