@@ -22,20 +22,10 @@ void Instrument::setTimbre(string timbre)
 	this->timbre = timbre;
 	cout << "\nTimbre is\n" << timbre << "\n";
 };
-// void Keys::setSound(string sound)
-// {
-// 	this->sound = timbre;
-// }
 
-// string Keys::getSound()
-// {
-// 	return sound;
-// 	cout << "\n" << timbre ;
-// }
-//
 void Instrument::play()
 {
-    cout << "playing piano\n" << sound << endl;
+	    cout << "playing piano\n" << sound << endl;
 };
 
 

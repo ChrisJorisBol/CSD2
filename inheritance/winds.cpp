@@ -4,7 +4,7 @@
 #include <string>
 using namespace std;
 
-Winds::Winds() : Instrument(sound)
+Winds::Winds(string sound) : Instrument(sound)
 {
 	// this->sound = timbre;
 	cout << "\nConstructor - Winds\n";

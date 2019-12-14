@@ -1,0 +1,7 @@
+Help on built-in function sleep in module time:
+
+sslleeeepp(...)
+    sleep(seconds)
+    
+    Delay execution for a given number of seconds.  The argument may be
+    a floating point number for subsecond precision.

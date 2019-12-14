@@ -1,0 +1,317 @@
+import simpleaudio as sa;
+import time;
+import random;
+from midiutil import MIDIFile;
+
+bpm = 0
+maatsoort = 0
+maten_input = 0
+event_list = 0
+value = False;
+
+def setup():
+    global kick
+    global snare
+    global hat
+    print("Welkom bij jouw persoonlijke beatgenerator!");
+    print("");
+    print("Voordat er een beat gegenereerd"
+    "kan worden heb ik wat informatie van je nodig")
+    print("");
+    kick = sa.WaveObject.from_wave_file("samples/kickdrum.wav");
+    snare = sa.WaveObject.from_wave_file("samples/snare.wav");
+    hat = sa.WaveObject.from_wave_file("samples/hat.wav");
+setup();
+
+
+def user_interface():
+    global bpm;
+    global maatsoort;
+    global maten_input;
+    try:
+        bpm = int(input("Allereerst heb ik het gewenste tempo nodig. "));
+
+        print("Elke maatsoort is mogelijk. Houdt alsjeblieft dit format aan")
+        print("")
+        print("4/4")
+        maatsoort = (input(" "));
+
+        print("Als laatste heb ik de gewenste hoeveelheid maten nodig. ")
+        maten_input = int(input("Hoeveel maten zou je willen genereren? "));
+
+user_interface();
+
+
+def event_grid():
+    splitsing_input = maatsoort.split("/")
+    global beats_per_maat;
+    beats_per_maat = int(splitsing_input[0]);
+    global lengte_per_beat;
+    lengte_per_beat = int(splitsing_input[1]);
+    global partial_grid;
+    partial_grid = int(beats_per_maat*maten_input)
+    global grid;
+    grid = list(range(1, partial_grid+1));
+    global grid_copy;
+    grid_copy = grid.copy();
+    global kwartnoot_lengte;
+    kwartnoot_lengte = (60/bpm);
+    global lengte;
+    lengte = kwartnoot_lengte*(4/lengte_per_beat)*1000;
+    print(grid_copy);
+event_grid();
+
+# snares_input = input("Willen we meer of minder snares? [meer/minder] ");
+# swing = (int(input("Hoeveel Swing zou je willen? [0-100] "))) / 100 / 2;
+#.split() deelt de ingevoerde maatsoort in een lijst en scheid deze bij de spatie
+
+
+volume = 100;
+list = [];
+
+event_list = [];
+list3 = [];
+probability_exsnare = 0;
+exsnare_plaats = 999;
+snare_plaats = 2
+kick_plaats = 3;
+probability_kick = 0.8
+probability_snare = 1
+partial_list = [];
+
+
+
+def logic_algorythm():
+    global event_list;
+    global select_algorythm;
+    global tellingx3;
+    global full_list
+    select_algorythm = 0
+    full_list = [];
+    grouping_2 = [1, 2];
+
+    grouping_3 = [1, 2, 3];
+
+    grouping_4 = [1, 2, 3 ,4];
+
+    aantalx3 = int(beats_per_maat/3);
+    tellingx3 = aantalx3 * 3;
+    aantalx4 = int(beats_per_maat/4);
+    twee_of_vier = beats_per_maat % 3;
+    if beats_per_maat % 4 == 0:
+        event_list = grouping_4 * aantalx4;
+        #als de hoeveelheid beats per maat gedeeld door 4 kan worden;
+        #volgt het deze logica;
+    if beats_per_maat % 4 != 0:
+        #als dat niet kan volgt de andere logica om een 'logische';
+        #groepering te maken van groepjes van 2 en 3 of 3 en 4;
+        if twee_of_vier == 0:
+            event_list = grouping_3 * aantalx3;
+            select_algorythm = 1
+        if twee_of_vier == 1:
+            aantalx3 -= 1;
+            event_list = grouping_3 * aantalx3 + grouping_4;
+            select_algorythm = 2
+        if twee_of_vier == 2:
+            event_list = grouping_3 * aantalx3 + grouping_2;
+            select_algorythm = 3
+    full_list = event_list * maten_input
+logic_algorythm();
+
+
+
+def event_algorythm():
+    partial_list = [];
+    probability_snare = 80;
+    count = 0;
+    for n in full_list:
+        temporary_variable = 0;
+
+        if select_algorythm == 0:
+            if n == 1 or n == 3:
+                partial_list.append(kick);
+            if n == 2:
+                partial_list.append(snare);
+            if n == 4:
+                partial_list.append(snare);
+            partial_list.append(hat);
+
+        if select_algorythm == 1:
+            chance_snare = random.randint(1, 100);
+            if n == 1:
+                partial_list.append(kick);
+            if n == 2 and chance_snare < probability_snare:
+                partial_list.append(snare);
+                temporary_variable = 1;
+            if n ==  3 and temporary_variable != 1:
+                partial_list.append(snare);
+            partial_list.append(snare);
+
+        if select_algorythm == 2:
+            chance_snare = random.randint(1,100);
+            if count < tellingx3:
+                if n == 1:
+                    partial_list.append(kick);
+                    count += 1;
+                if n == 3:
+                    partial_list.append(snare);
+                    count += 1;
+                partial_list.append(hat);
+
+            if count == tellingx3:
+                if n == 1:
+                    partial_list.append(kick);
+                if n == 2 and chance_snare < probability_snare:
+                    partial_list.append(snare);
+                    temporary_variable = 1;
+                if n == 4 and temporary_variable != 1:
+                    partial_list.append(snare);
+                partial_list.append(hat);
+
+        if select_algorythm == 3:
+            if count < tellingx3:
+                if n == 1:
+                    partial_list.append(kick);
+                    count += 1;
+                if n == 3:
+                    partial_list.append(snare);
+                    count += 1;
+
+            if count == tellingx3:
+                if n == 1:
+                    partial_list.append(kick);
+                if n == 2:
+                    partial_list.append(snare);
+        print(partial_list)
+
+event_algorythm()
+###
+#     global event_list;
+#     partial_list = [];
+#
+#     if maatsoort = 4:
+#         for n in(grid):
+#             if n % 4 == 1:
+#                 partial_list.append(kick);
+#             if n % 4 == 2 and n % 4 != 0:
+#                 if (random.randint(1, 100)/100) < probability_snare:
+#                     partial_list.append(snare);
+#             if n % 4 == 0:
+#                 if (random.randint(1, 100)/100) < 0.8:
+#                     partial_list.append(snare);
+#             partial_list.append(hat);
+#             event_list.append(partial_list);
+
+
+for n in(grid):
+    #List om de midi mee te genereren
+    if n == 1:
+        partial_list.append(kick);
+
+    if (n % beats_per_maat) % snare_plaats == 0 and n % beats_per_maat != 0:
+        if (random.randint(1, 100)/100) < probability_snare:
+            partial_list.append(snare);
+    # if (n % beats_per_maat) % exsnare_plaats == 0:
+    #     if (random.randint(1, 100)/100) < probability_exsnare:
+    #         partial_list.append(snare);
+    if n % beats_per_maat == 0:
+        partial_list.append(kick);
+    if n % kick_plaats == 0 and n % beats_per_maat != 0:
+        if (n % beats_per_maat) % snare_plaats != 0 and (random.randint(1, 100)/100) < probability_kick:
+            partial_list.append(kick);
+
+    partial_list.append(hat);
+    list2.append(partial_list);
+    list3 = list2.copy();
+
+print(list3);
+# print(list3);
+# print(time.time());
+# print(timeZero);
+
+# grid geeft de beat aan en die gebruik ik om te berekenen of de tijd al
+# verstreken is om de sample af te spelen
+ts = grid.pop(0);
+# print('timestamp', ts);
+# sample_stap haalt de eerstee lijst uit list2 waar alle events in staan
+sample_stap = list2.pop(0);
+
+# print('pop.list2', sample_stap)
+
+# Sample_play haalt een event uit deze eerste lijst
+sample_play = sample_stap.pop(0);
+
+# print(sample_play);
+
+timeZero=time.time()*1000;
+
+iteration = 1;
+repeats = int(maten_input/2);
+# print(repeats);
+
+while iteration <= repeats:
+    now = time.time()*1000;
+    help = now-timeZero;
+    if now-timeZero >= ts*lengte:
+        sample_play.play();
+        if sample_stap:
+            sample_play = sample_stap.pop(0);
+            sample_play.play();
+        if list2:
+            sample_stap = list2.pop(0);
+            sample_play = sample_stap.pop(0);
+        if grid:
+            ts = grid.pop(0);
+        elif iteration <= repeats:
+            iteration += 1;
+            list2 = list3.copy();
+            print('list3', list3)
+            grid = grid_copy.copy();
+            print('list2', list2);
+            sample_stap = list2.pop(0);
+            sample_play = sample_stap.pop(0);
+            timeZero = time.time()*1000;
+            ts = grid.pop(0);
+        else:
+            break;
+    else:
+        time.sleep(0.001);
+
+list2 = list3.copy();
+#3 tracks voor 3 samples
+# MyMIDI = MIDIFile(3);
+# MyMIDI.addTempo(0, 0, bpm);
+# track1    = 0; #Kick
+# track2    = 0; #Snare
+# track3    = 0; #Hat
+# channel  = 10;
+# volume   = 100; #127 is het luidst
+# volume = 100;
+# duration = 0.5;
+# time_extra = lengte_per_beat * 0.25;
+#
+# #Schrijven van de midi-noten op de juiste events
+# for i in list2:
+#     if i[0] == kick:
+#         MyMIDI.addNote(track1, channel, 60, ((i[0]-1)/time_extra), duration, 100);
+#         # print('kick');
+#     if i[0] == hat:
+#         # print('hat')
+#         volume = random.randint(70,100);
+#         MyMIDI.addNote(track3, channel, 64, ((i[0]-1)/time_extra) + swing, duration, volume);
+#     if len(i) == 2:
+#         if i[0] == hat:
+#             # print('hat');
+#             volume = random.randint(70,100);
+#             MyMIDI.addNote(track3, channel, 64, ((i[0]-1)/time_extra) + swing, duration, volume);
+#         if i[1] == snare:
+#             # print('snare')
+#             MyMIDI.addNote(track2, channel, 67, ((i[0]-1)/time_extra), duration, 100);
+#
+#     if i[0] == snare:
+#         # print('snare');
+#         MyMIDI.addNote(track2, channel, 67, ((i[0]-1)/time_extra), duration, 100);
+#
+# #Creeren van de .Midi file
+# with open("mymidifile.mid", 'wb') as output_file:
+#     MyMIDI.writeFile(output_file);

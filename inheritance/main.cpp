@@ -9,15 +9,15 @@ using namespace std;
 
 int main()
 {
-	Instrument key("Pling");
-	Keys piano;
-	Instrument tromp("Sound2");
-	Winds trumpet;
+	// Instrument key("");
+
+	Keys piano("geluid");
+	// Instrument tromp("Sound2");
+	Winds trumpet("asdf");
     piano.setRange("8 Octaves");
 	piano.setTimbre("Warm");
 	piano.play();
 
-	// Winds trumpet;
 	trumpet.setRange("2.5 Octaven");
 	trumpet.setTimbre("Schel");
 	trumpet.play();

@@ -6,6 +6,6 @@
 class Keys: public Instrument
 {
 public:
-    Keys();
+    Keys(std::string sound);
 
 };

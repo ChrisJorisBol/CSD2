@@ -6,6 +6,6 @@
 class Winds: public Instrument
 {
 public:
-    Winds();
+    Winds(std::string sound);
 
 };
